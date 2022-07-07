@@ -1,0 +1,117 @@
+#define EN_R   6
+#define M_R1   7
+#define M_R2   8
+#define M_L1   9
+#define M_L2   10
+#define EN_L   11
+int speed=255;
+int val0, val1, val2, val3, val4;
+
+void setup() 
+{
+  Serial.begin(9600);
+  
+  pinMode(EN_R,OUTPUT);
+  pinMode(M_R1,OUTPUT);   
+  pinMode(M_R2,OUTPUT);
+  pinMode(M_L1,OUTPUT);
+  pinMode(M_L2,OUTPUT);
+  pinMode(EN_L,OUTPUT);  
+}
+
+void stop()
+{
+ analogWrite(EN_R,LOW);
+ digitalWrite(M_R1,LOW);
+ digitalWrite(M_R2,LOW);
+ digitalWrite(M_L1,LOW);
+ digitalWrite(M_L2,LOW);
+ analogWrite(EN_L,LOW);
+}
+void forward()
+{
+ analogWrite(EN_R, speed);
+ digitalWrite(M_R1,HIGH);
+ digitalWrite(M_R2,LOW);
+ digitalWrite(M_L1,HIGH);
+ digitalWrite(M_L2,LOW);
+ analogWrite(EN_L, speed);
+}
+void back()
+{
+ analogWrite(EN_R, speed);
+ digitalWrite(M_R1,LOW);
+ digitalWrite(M_R2,HIGH);
+ digitalWrite(M_L1,LOW);
+ digitalWrite(M_L2,HIGH);
+ analogWrite(EN_L, speed);
+}
+void left_f()
+{
+ analogWrite(EN_R, speed-35);
+ digitalWrite(M_R1,HIGH);
+ digitalWrite(M_R2,LOW);
+ analogWrite(EN_L, speed-35);
+ digitalWrite(M_L1,LOW);
+ digitalWrite(M_L2,HIGH); // 역회전 LOW, HIGH
+}
+void left()
+{
+ analogWrite(EN_R, speed-70);
+ digitalWrite(M_R1,HIGH);
+ digitalWrite(M_R2,LOW);
+ digitalWrite(M_L1,LOW);
+ digitalWrite(M_L2,LOW);
+ analogWrite(EN_L, speed);  // speed 값 의미없음
+}
+void right_f()
+{
+ analogWrite(EN_R, speed-35);
+ digitalWrite(M_R1,LOW);
+ digitalWrite(M_R2,HIGH); // 역회전 LOW, HIGH
+ analogWrite(EN_L, speed-35);
+ digitalWrite(M_L1,HIGH);
+ digitalWrite(M_L2,LOW);
+}
+void right()
+{
+ analogWrite(EN_R, speed);  // speed 값 의미없음
+ digitalWrite(M_R1,LOW);
+ digitalWrite(M_R2,LOW);
+ digitalWrite(M_L1,HIGH);
+ digitalWrite(M_L2,LOW);
+ analogWrite(EN_L, speed-70);
+}
+void loop()
+{
+  val0=analogRead(A0); //1 leftmost
+  val1=analogRead(A1); //2 
+  val2=analogRead(A2); //3 mid
+  val3=analogRead(A3); //4
+  val4=analogRead(A4); //5 rightmost
+  if(val0>500) val0=1;
+  else val0=0;
+  if(val1>500) val1=1;
+  else val1=0;
+  if(val2>500) val2=1;
+  else val2=0;
+  if(val3>500) val3=1;
+  else val3=0;
+  if(val4>500) val4=1;
+  else val4=0;
+  Serial.print(val0); Serial.print(" ");
+  Serial.print(val1); Serial.print(" ");
+  Serial.print(val2); Serial.print(" ");
+  Serial.print(val3); Serial.print(" ");
+  Serial.println(val4);
+  
+  if(val0 && val1 && !val2 && val3 && val4) forward(); //11011 forward
+  //if(val0 && val1 && val2 && val3 && val4) back(); //11111 back
+  if(!val0 && val1 && val2 && val3 && val4) left_f(); //01111 left_f
+  if((val0 && !val1 && val2 && val3 && val4)||(val0 && !val1 && !val2 && val3 && val4)||(!val0 && !val1 && !val2 && val3 && val4)) left();
+  // 10111, 10011, 00011 left
+  if(val0 && val1 && val2 && val3 && !val4) right_f();// 11110 right_f
+  if((val0 && val1 && val2 && !val3 && val4)||(val0 && val1 && !val2 && !val3 && val4)||(val0 && val1 && !val2 && !val3 && !val4)) right();
+  // 11101,11001,11000 right
+  if((!val0 && !val1 && !val2 && !val3 &&!val4)||(!val0 && val1 && !val2 && !val3 &&!val4)||(!val0 && !val1 && !val2 && val3 &&!val4)) stop(); // 00000, 01000, 00010 stop
+}
