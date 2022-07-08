@@ -5,12 +5,10 @@
 #define M_L2   10
 #define EN_L   11
 int speed=255; // vlotage (0~255) MAX 255
-int val0, val1, val2, val3, val4;
+int val0, val1, val2, val3, val4; // line tracer 5ch
 
 void setup() 
 {
-  Serial.begin(9600);
-  
   pinMode(EN_R,OUTPUT);
   pinMode(M_R1,OUTPUT);   
   pinMode(M_R2,OUTPUT);
@@ -48,16 +46,16 @@ void back()
 }
 void left_f()
 {
- analogWrite(EN_R, speed-35);
+ analogWrite(EN_R, speed-25);
  digitalWrite(M_R1,HIGH);
  digitalWrite(M_R2,LOW);
- analogWrite(EN_L, speed-35);
+ analogWrite(EN_L, speed-25);
  digitalWrite(M_L1,LOW);
  digitalWrite(M_L2,HIGH); // 역회전 LOW, HIGH
 }
 void left()
 {
- analogWrite(EN_R, speed-70);
+ analogWrite(EN_R, speed-50);
  digitalWrite(M_R1,HIGH);
  digitalWrite(M_R2,LOW);
  digitalWrite(M_L1,LOW);
@@ -66,10 +64,10 @@ void left()
 }
 void right_f()
 {
- analogWrite(EN_R, speed-35);
+ analogWrite(EN_R, speed-25);
  digitalWrite(M_R1,LOW);
  digitalWrite(M_R2,HIGH); // 역회전 LOW, HIGH
- analogWrite(EN_L, speed-35);
+ analogWrite(EN_L, speed-25);
  digitalWrite(M_L1,HIGH);
  digitalWrite(M_L2,LOW);
 }
@@ -80,7 +78,7 @@ void right()
  digitalWrite(M_R2,LOW);
  digitalWrite(M_L1,HIGH);
  digitalWrite(M_L2,LOW);
- analogWrite(EN_L, speed-70);
+ analogWrite(EN_L, speed-50);
 }
 void loop()
 {
@@ -99,19 +97,17 @@ void loop()
   else val3=0;
   if(val4>500) val4=1;
   else val4=0;
-  Serial.print(val0); Serial.print(" ");
-  Serial.print(val1); Serial.print(" ");
-  Serial.print(val2); Serial.print(" ");
-  Serial.print(val3); Serial.print(" ");
-  Serial.println(val4);
   
-  if(val0 && val1 && !val2 && val3 && val4) forward(); //11011 forward
-  //if(val0 && val1 && val2 && val3 && val4) back(); //11111 back
-  if(!val0 && val1 && val2 && val3 && val4) left_f(); //01111 left_f
+  if(val0 && val1 && !val2 && val3 && val4) forward();
+  //11011 forward
+  if(!val0 && val1 && val2 && val3 && val4) left_f();
+  //01111 left_f
   if((val0 && !val1 && val2 && val3 && val4)||(val0 && !val1 && !val2 && val3 && val4)||(!val0 && !val1 && !val2 && val3 && val4)) left();
   // 10111, 10011, 00011 left
-  if(val0 && val1 && val2 && val3 && !val4) right_f();// 11110 right_f
+  if(val0 && val1 && val2 && val3 && !val4) right_f();
+  // 11110 right_f
   if((val0 && val1 && val2 && !val3 && val4)||(val0 && val1 && !val2 && !val3 && val4)||(val0 && val1 && !val2 && !val3 && !val4)) right();
   // 11101,11001,11000 right
-  if((!val0 && !val1 && !val2 && !val3 &&!val4)||(!val0 && val1 && !val2 && !val3 &&!val4)||(!val0 && !val1 && !val2 && val3 &&!val4)) stop(); // 00000, 01000, 00010 stop
+  if((!val0 && !val1 && !val2 && !val3 &&!val4)||(!val0 && val1 && !val2 && !val3 &&!val4)||(!val0 && !val1 && !val2 && val3 &&!val4)) stop();
+  // 00000, 01000, 00010 stop
 }
