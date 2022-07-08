@@ -1,0 +1,20 @@
+// 숫자가 순차적으로 증가(감소)하다가 어느 지점에서 감소(증가)하는 값을 출력, if문 활용 //
+void setup() {
+  pinMode(2, OUTPUT);
+  pinMode(3, OUTPUT);
+  pinMode(4, OUTPUT);
+  pinMode(5, OUTPUT);
+  Serial.begin(9600);
+}
+int pin=2;
+int dir=1;
+
+void loop() {
+  digitalWrite(pin, HIGH);
+  delay(300);
+  if(pin==5) dir=-1;
+  if(pin==2) dir=1;
+  digitalWrite(pin, LOW);
+  pin+=dir;
+  Serial.print(pin);
+}
