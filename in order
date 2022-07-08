@@ -18,3 +18,23 @@ void loop() {
   pin+=dir;
   Serial.print(pin);
 }
+
+--------------------------------------------------
+// LED가 순차적으로 켜지는 코드. 수정 필요함 //
+void setup() {
+  for(int i=6;i<12;i++)
+  pinMode(i,OUTPUT);
+  
+}
+
+void loop() {
+
+  digitalWrite(6,HIGH);
+  digitalWrite(7,HIGH);
+  digitalWrite(8,LOW);
+
+  digitalWrite(9,HIGH);
+  digitalWrite(10,LOW);
+  digitalWrite(11,HIGH);
+
+}
